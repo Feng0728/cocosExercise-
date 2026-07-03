@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, input, Input, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -7,9 +7,35 @@ export class Player extends Component {
     @property // 装饰器，表示该属性可以在编辑器中进行设置
     PlayerMoveSpeed: number = 30; // 小车移动速度
 
-    // 先获取该节点位置
-    // 再修改该节点位置
-    // this.node代表节点自身
+    Player_Mvoe = {Left: false, Right: false}; // 小车移动方向
+
+    protected onLoad(): void {
+        input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+        input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
+    }
+
+    protected onDestroy(): void {
+        input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+        input.off(Input.EventType.KEY_UP, this.onKeyUp, this);
+    }
+
+    protected onKeyDown(key): void {
+        if(key.keyCode == 65) { // A键
+            this.Player_Mvoe.Left = true;
+        }
+        if(key.keyCode == 68) { // D键
+            this.Player_Mvoe.Right = true;
+        }
+    }
+
+    protected onKeyUp(key): void {
+        if(key.keyCode == 65) { // A键
+            this.Player_Mvoe.Left = false;
+        }
+        if(key.keyCode == 68) { // D键
+            this.Player_Mvoe.Right = false;
+        }
+    }
 
     start() {
 
@@ -19,8 +45,16 @@ export class Player extends Component {
         const position = this.node.getPosition();
         // 实现帧时间补偿
         const moveDistance = this.PlayerMoveSpeed * deltaTime;
-        this.node.setPosition(position.x,position.y , position.z-moveDistance);
 
+        if(this.Player_Mvoe.Left && !this.Player_Mvoe.Right) {
+            position.x -= moveDistance*0.1;
+        }
+        else if(this.Player_Mvoe.Right && !this.Player_Mvoe.Left) {
+            position.x += moveDistance*0.1;
+        }
+
+        const z = position.z - moveDistance;
+        this.node.setPosition(position.x, position.y, z);
     }
 }
 
