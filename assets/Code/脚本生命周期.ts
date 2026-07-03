@@ -9,7 +9,7 @@ const { ccclass, property } = _decorator;
     // 4. onEnable() 启用函数：在组件被启用时调用，通常用于注册事件监听器或启动定时器。
     // 5. onDisable() 禁用函数：在组件被禁用时调用，通常用于注销事件监听器或停止定时器。
     // 6. onDestroy() 销毁函数：在组件被销毁时调用，通常用于清理资源或取消订阅事件。
-    // 7. lateUpdate(deltaTime: number) 延迟更新函数：在所有update函数调用之后调用，通常用于处理需要在所有组件更新完成后进行的逻辑。
+    // 7. lateUpdate(deltaTime: number) 延迟更新函数：在所有update函数调用之后调用，通常用于处理需要在所有组件更新完成后进行的逻辑.
 
 
 
