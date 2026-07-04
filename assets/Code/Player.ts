@@ -1,4 +1,4 @@
-import { _decorator, Component, input, Input, Node } from 'cc';
+import { _decorator, Collider, Component, input, Input, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -7,23 +7,35 @@ export class Player extends Component {
     // 脚本中绑定节点/组件：@property(类型) 对象名: 类型 = null;
     @property(Node)
     Camera_Node: Node = null; // 绑定摄像机节点
-
+    @property(Collider)
+    Player_Collider: Collider = null; // 绑定小车碰撞组件
     @property // 装饰器，表示该属性可以在编辑器中进行设置
-    PlayerMoveSpeed: number = 30; // 小车移动速度
-
+    PlayerMoveSpeed: number = 10; // 小车移动速度
     Player_Mvoe = {Left: false, Right: false}; // 小车移动方向
+    Move = true; // 小车是否可以移动
 
     protected onLoad(): void {
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
+        this.Player_Collider.on('onTriggerEnter', this.Start_Collider, this);
     }
 
     protected onDestroy(): void {
         input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.off(Input.EventType.KEY_UP, this.onKeyUp, this);
+        this.Player_Collider.off('onTriggerEnter', this.Start_Collider, this);
     }
 
-    protected onKeyDown(key): void {
+    Start_Collider(C) { // 碰撞后执行的函数
+        this.Move = false; // 碰撞后小车不能移动
+        if(C.otherCollider.node.name == "End") { // 如果碰撞到的物体是终点
+            console.log("游戏胜利");
+        }else { // 如果碰撞到的物体是障碍物
+            console.log("游戏失败");
+        }
+    }
+
+    onKeyDown(key){
         if(key.keyCode == 65) { // A键
             this.Player_Mvoe.Left = true;
         }
@@ -32,7 +44,7 @@ export class Player extends Component {
         }
     }
 
-    protected onKeyUp(key): void {
+    onKeyUp(key){
         if(key.keyCode == 65) { // A键
             this.Player_Mvoe.Left = false;
         }
@@ -46,17 +58,19 @@ export class Player extends Component {
     }
 
     update(deltaTime: number) { //deltaTime是每一帧的时间间隔，单位是秒
+        if(!this.Move) return; // 如果小车不能移动，则直接返回
         const playerPos = this.node.getPosition();
         const cameraPos = this.Camera_Node.getPosition();
         // 实现帧时间补偿
         const moveDistance = this.PlayerMoveSpeed * deltaTime;
-
+    
         if(this.Player_Mvoe.Left && !this.Player_Mvoe.Right) {
-            playerPos.x -= moveDistance*0.1;
+            playerPos.x -= moveDistance*0.5;
         }
         else if(this.Player_Mvoe.Right && !this.Player_Mvoe.Left) {
-            playerPos.x += moveDistance*0.1;
+            playerPos.x += moveDistance*0.5;
         }
+        playerPos.x = Math.max(-5, Math.min(5, playerPos.x)); // 限制小车移动范围在[-5, 5]之间
 
         this.node.setPosition(playerPos.x, playerPos.y, playerPos.z - moveDistance);
         this.Camera_Node.setPosition(cameraPos.x, cameraPos.y, cameraPos.z - moveDistance);
