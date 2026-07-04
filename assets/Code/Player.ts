@@ -6,6 +6,8 @@ export class Player extends Component {
 
     // 脚本中绑定节点/组件：@property(类型) 对象名: 类型 = null;
     @property(Node)
+    Tips_Node: Node = null; // 绑定提示父节点
+    @property(Node)
     Camera_Node: Node = null; // 绑定摄像机节点
     @property(Collider)
     Player_Collider: Collider = null; // 绑定小车碰撞组件
@@ -28,6 +30,7 @@ export class Player extends Component {
 
     Start_Collider(C) { // 碰撞后执行的函数
         this.Move = false; // 碰撞后小车不能移动
+        this.Tips_Node.active = true; // 碰撞后显示提示节点
         if(C.otherCollider.node.name == "End") { // 如果碰撞到的物体是终点
             console.log("游戏胜利");
         }else { // 如果碰撞到的物体是障碍物
