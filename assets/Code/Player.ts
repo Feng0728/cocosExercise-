@@ -1,10 +1,12 @@
-import { _decorator, Collider, Component, input, Input, Node } from 'cc';
+import { _decorator, Collider, Component, input, Input, Label, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
 export class Player extends Component {
 
     // 脚本中绑定节点/组件：@property(类型) 对象名: 类型 = null;
+    @property(Label)
+    Tips_Label: Label = null; // 绑定提示标签
     @property(Node)
     Tips_Node: Node = null; // 绑定提示父节点
     @property(Node)
@@ -32,9 +34,9 @@ export class Player extends Component {
         this.Move = false; // 碰撞后小车不能移动
         this.Tips_Node.active = true; // 碰撞后显示提示节点
         if(C.otherCollider.node.name == "End") { // 如果碰撞到的物体是终点
-            console.log("游戏胜利");
+            this.Tips_Label.string = "游戏胜利"; // 显示提示信息
         }else { // 如果碰撞到的物体是障碍物
-            console.log("游戏失败");
+            this.Tips_Label.string = "游戏失败"; // 显示提示信息
         }
     }
 
