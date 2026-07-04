@@ -1,4 +1,4 @@
-import { _decorator, Collider, Component, input, Input, Label, Node } from 'cc';
+import { _decorator, Collider, Component, director, input, Input, Label, Node } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -28,6 +28,14 @@ export class Player extends Component {
         input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.off(Input.EventType.KEY_UP, this.onKeyUp, this);
         this.Player_Collider.off('onTriggerEnter', this.Start_Collider, this);
+    }
+
+    New_Game(){ // 新游戏按钮点击事件
+        // this.Tips_Node.active = false; // 隐藏提示信息
+        // this.node.setPosition(0, 0, 0); // 重置小车位置
+        // this.Camera_Node.setPosition(0, 12.159, 18.018); // 重置摄像机位置
+        // this.Move = true; // 小车可以移动
+        director.loadScene("C1"); // 加载游戏场景
     }
 
     Start_Collider(C) { // 碰撞后执行的函数
